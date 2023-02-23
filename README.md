@@ -1,1 +1,2 @@
 # LoRaWAN-SysCom
+LORA/LORAWAN (ESP32)-GATEWAY-TTN & Raspberryp Pi
