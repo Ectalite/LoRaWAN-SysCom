@@ -1,0 +1,99 @@
+menu "Echo Example Configuration"
+
+    orsource "$IDF_PATH/examples/common_components/env_caps/$IDF_TARGET/Kconfig.env_caps"
+
+    config EXAMPLE_UART_PORT_NUM
+        int "UART port number"
+        range 0 2 if IDF_TARGET_ESP32 || IDF_TARGET_ESP32S3
+        default 2 if IDF_TARGET_ESP32 || IDF_TARGET_ESP32S3
+        range 0 1
+        default 1
+        help
+            UART communication port number for the example.
+            See UART documentation for available port numbers.
+
+    config EXAMPLE_UART_BAUD_RATE
+        int "UART communication speed"
+        range 1200 115200
+        default 115200
+        help
+            UART communication speed for Modbus example.
+
+    config EXAMPLE_UART_RXD
+        int "UART RXD pin number"
+        range ENV_GPIO_RANGE_MIN ENV_GPIO_IN_RANGE_MAX
+        default 5
+        help
+            GPIO number for UART RX pin. See UART documentation for more information
+            about available pin numbers for UART.
+
+    config EXAMPLE_UART_TXD
+        int "UART TXD pin number"
+        range ENV_GPIO_RANGE_MIN ENV_GPIO_OUT_RANGE_MAX
+        default 4
+        help
+            GPIO number for UART TX pin. See UART documentation for more information
+            about available pin numbers for UART.
+
+    config EXAMPLE_TASK_STACK_SIZE
+        int "UART echo example task stack size"
+        range 1024 16384
+        default 2048
+        help
+            Defines stack size for UART echo example. Insufficient stack size can cause crash.
+
+    
+    config UART_LORA_PORT_NUM
+        int "UART LoRa port number"
+        range 0 2
+        default 1
+        help
+            UART communication port number for the example.
+            See UART documentation for available port numbers.
+
+    config UART_LORA_TX
+        int "UART LoRa TX pin number"
+        range ENV_GPIO_RANGE_MIN ENV_GPIO_OUT_RANGE_MAX
+        default 17
+        help
+            GPIO number for LoRa module UART TX pin.
+
+    config UART_LORA_RX
+        int "UART LoRa RX pin number"
+        range ENV_GPIO_RANGE_MIN ENV_GPIO_OUT_RANGE_MAX
+        default 18
+        help
+            GPIO number for LoRa module UART RX pin.
+
+    choice BLINK_LED
+        prompt "Blink LED type"
+        default BLINK_LED_GPIO if IDF_TARGET_ESP32 || !SOC_RMT_SUPPORTED
+        default BLINK_LED_RMT
+        help
+            Defines the default peripheral for blink example
+
+        config BLINK_LED_GPIO
+            bool "GPIO"
+        config BLINK_LED_RMT
+            bool "RMT - Addressable LED"
+    endchoice
+
+    config BLINK_GPIO
+        int "Blink GPIO number"
+        range ENV_GPIO_RANGE_MIN ENV_GPIO_OUT_RANGE_MAX
+        default 5 if IDF_TARGET_ESP32
+        default 18 if IDF_TARGET_ESP32S2
+        default 48 if IDF_TARGET_ESP32S3
+        default 8
+        help
+            GPIO number (IOxx) to blink on and off or the RMT signal for the addressable LED.
+            Some GPIOs are used for other purposes (flash connections, etc.) and cannot be used to blink.
+
+    config BLINK_PERIOD
+        int "Blink period in ms"
+        range 10 3600000
+        default 1000
+        help
+            Define the blinking period in milliseconds.
+
+endmenu

@@ -1,0 +1,20 @@
+//Test si tout est ok
+AT
+
+// On définit le nouveau baudrate
+AT+UART=BR, 115200
+
+//Pour rajouter le device sur chirpstack
+AT+ID=DevEui 
+
+//On définit l'appkey
+AT+KEY= APPKEY,"d5 90 3d e6 a0 9e 84 6a d6 fd 3f 94 e1 a3 3d 5a"
+
+//On passe en mode OTAA
+AT+MODE=LWOTAA
+
+//On rejoint le réseau
+AT+JOIN
+
+//On envoie un message
+AT+MSG="CestNoe"
