@@ -13,6 +13,8 @@
 #include "driver/gpio.h"
 #include "sdkconfig.h"
 #include "esp_log.h"
+#include "led_strip.h"
+#include <string.h>
 
 /**
  * This is an example which echos any data it receives on configured UART back to the sender,
@@ -37,14 +39,19 @@
 
 #define LORA_TX (CONFIG_UART_LORA_TX)
 #define LORA_RX (CONFIG_UART_LORA_RX)
-#define LORA_BASE_BAUD_RATE 115000
+#define LORA_BASE_BAUD_RATE 115200
 #define LORA_HIGH_BAUD_RATE 230400
 #define UART_LORA_PORT_NUM (CONFIG_UART_LORA_PORT_NUM)
 
+#define BLINK_GPIO (CONFIG_BLINK_GPIO)
+
 #define BUF_SIZE (1024)
+
+static led_strip_handle_t led_strip;
 
 static void echo_task(void *arg)
 {
+    ESP_LOGI("EchoTask", "Hello!");
     /* Configure parameters of an UART driver,
      * communication pins and install the driver */
     uart_config_t uart_config = {
@@ -87,13 +94,17 @@ static void echo_task(void *arg)
     while (1) {
         // Read data from the UART2
         int len = uart_read_bytes(ECHO_UART_PORT_NUM, data, (BUF_SIZE - 1), 20 / portTICK_PERIOD_MS);
-        if(memcmp("LED", data, 3))
+        if(len != 0)
+        {
+            ESP_LOGI("EchoTask", "Got something per uart");
+        }
+        /*if(memcmp("LED", data, 3))
         {
             if(memcmp("ON", data+3, 2))
             {
-                /* Set the LED pixel using RGB from 0 (0%) to 255 (100%) for each color */
+                // Set the LED pixel using RGB from 0 (0%) to 255 (100%) for each color
                 led_strip_set_pixel(led_strip, 0, 16, 16, 16);
-                /* Refresh the strip to send data */
+                // Refresh the strip to send data
                 led_strip_refresh(led_strip);
             }
             else if(memcmp("OFF", data+3, 3))
@@ -107,17 +118,16 @@ static void echo_task(void *arg)
         }
         else
         {
-            //Write to UART1
-            uart_write_bytes(UART_LORA_PORT_NUM, (const char *) data, len);
-        }
+            
+        }*/
+        //Write to UART1
+        uart_write_bytes(UART_LORA_PORT_NUM, (const char *) data, len);
         //Read from UART1
         len = uart_read_bytes(UART_LORA_PORT_NUM, data, (BUF_SIZE - 1), 20 / portTICK_PERIOD_MS);
         // Write to UART2
         uart_write_bytes(ECHO_UART_PORT_NUM, (const char *) data, len);
     }
 }
-
-static led_strip_handle_t led_strip;
 
 static void blink_led(void)
 {
@@ -133,7 +143,7 @@ static void blink_led(void)
 
 static void configure_led(void)
 {
-    ESP_LOGI(TAG, "Example configured to blink addressable LED!");
+    ESP_LOGI("LED", "Example configured to blink addressable LED!");
     /* LED strip initialization with the GPIO and pixels number*/
     led_strip_config_t strip_config = {
         .strip_gpio_num = BLINK_GPIO,
@@ -154,6 +164,6 @@ void app_main(void)
 
     //Tasks declaration
     xTaskCreate(echo_task, "uart_echo_task", ECHO_TASK_STACK_SIZE, NULL, 10, NULL);
-    xTaskCreate(echo_task, "uart_echo_task", ECHO_TASK_STACK_SIZE, NULL, 10, NULL);
+    //xTaskCreate(echo_task, "uart_echo_task", ECHO_TASK_STACK_SIZE, NULL, 10, NULL);
 
 }

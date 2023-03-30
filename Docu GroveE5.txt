@@ -8,7 +8,8 @@ AT+UART=BR, 115200
 AT+ID=DevEui 
 
 //On définit l'appkey
-AT+KEY= APPKEY,"d5 90 3d e6 a0 9e 84 6a d6 fd 3f 94 e1 a3 3d 5a"
+AT+KEY= APPKEY,"d5 90 3d e6 a0 9e 84 6a d6 fd 3f 94 e1 a3 3d 5a" //LoraE5-1
+AT+KEY= APPKEY,"14 46 2a 40 45 46 4c 7e a7 29 6c 07 5f c7 ba cc" //LoraE5-2
 
 //On passe en mode OTAA
 AT+MODE=LWOTAA
