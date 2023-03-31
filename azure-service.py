@@ -8,6 +8,9 @@ import base64
 
 import os
 
+from dotenv import load_dotenv
+load_dotenv()
+
 # Get environment variables
 NAMESPACE_CONNECTION_STR_syscom = os.getenv('NAMESPACE_CONNECTION_STR_syscom')
 NAMESPACE_CONNECTION_STR_seeeduino = os.getenv('NAMESPACE_CONNECTION_STR_seeeduino')
@@ -76,9 +79,13 @@ def sendTelegram(loraDict):
    requests.get("https://api.telegram.org/bot"+token+"/sendMessage?chat_id="+chat_id+"&parse_mode=HTML&text="+message)
    
 
+async def main():
+    periodic_a_task = asyncio.create_task(run(NAMESPACE_CONNECTION_STR_syscom, QUEUE_NAME_syscom))
+    periodic_b_task = asyncio.create_task(run(NAMESPACE_CONNECTION_STR_seeeduino, QUEUE_NAME_seeeduino))
+    await asyncio.gather(periodic_a_task, periodic_b_task)
+
 if __name__ == '__main__':
-    asyncio.run(run(NAMESPACE_CONNECTION_STR_syscom, QUEUE_NAME_syscom))
-    asyncio.run(run(NAMESPACE_CONNECTION_STR_seeeduino, QUEUE_NAME_seeeduino))
+    asyncio.run(main())
     #lora_dict = {'applicationID': '2', 'applicationName': 'Syscom', 'deviceName': 'LoraE5-1', 'devEUI': 'LPfxIDIwvTM=', 'rxInfo': [{'gatewayID': 'qlVaAAAAAQE=', 'time': None, 'timeSinceGPSEpoch': None, 'rssi': -99, 'loRaSNR': 10.8, 'channel': 7, 'rfChain': 0, 'board': 0, 'antenna': 0, 'location': {'latitude': 46.997652234796135, 'longitude': 6.938751339912415, 'altitude': 450, 'source': 'UNKNOWN', 'accuracy': 0}, 'fineTimestampType': 'NONE', 'context': 'qwhGxA==', 'uplinkID': 'L7yj2TnyTb6I192nb0KvAA==', 'crcStatus': 'CRC_OK'}], 'txInfo': {'frequency': 867900000, 'modulation': 'LORA', 'loRaModulationInfo': {'bandwidth': 125, 'spreadingFactor': 7, 'codeRate': '4/5', 'polarizationInversion': False}}, 'adr': True, 'dr': 5, 'fCnt': 10, 'fPort': 8, 'data': 'QW5kcm9pZA==', 'objectJSON': '', 'tags': {}, 'confirmedUplink': False, 'devAddr': '5AH8Tw==', 'publishedAt': '2023-03-30T12:57:59.700448359Z', 'deviceProfileID': '572ee550-3356-448f-8be4-cd8197910410', 'deviceProfileName': 'SysCom'}
     #sendTelegram(lora_dict)
 
