@@ -108,7 +108,7 @@ static void lora_task(void *arg)
     ESP_LOGI("LoraTask", "Start sending");
 
     while (1) {
-        snprintf(buffer, 100, "AT+MSG=\"Blotz-%d\"\n", u16msgNumber);
+        snprintf(buffer, 100, "AT+CMSG=\"Blotz-%d\"\n", u16msgNumber);
         ESP_LOGI("LoraTask", "%s", buffer);
 
         //Send a message per LoRA
