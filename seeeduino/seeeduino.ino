@@ -1,4 +1,7 @@
 #include <LoRaWan.h>
+#include <UptimeString.h>
+
+UptimeString uptimeString;
 
 void LoraInit(void);
 void sendLoraPacket(String);
@@ -18,7 +21,7 @@ void setup() {
 void loop() {
   digitalWrite(13, HIGH);   // turn the LED on (HIGH is the voltage level)
   delay(3000);              // wait for a second
-  sendLoraPacket("Hello World!");
+  sendLoraPacket(String("Uptime: ") + uptimeString.getUptime2());
   SerialUSB.println("Hello Xavier!");
   digitalWrite(13, LOW);    // turn the LED off by making the voltage LOW
   delay(1000);              // wait for a second
