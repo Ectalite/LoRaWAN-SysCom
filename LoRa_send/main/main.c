@@ -48,6 +48,7 @@
 #define BUF_SIZE (1024)
 
 void sendLoraModule(char* text, int size);
+void joinNetwork(void);
 
 static void lora_task(void *arg)
 {
@@ -95,14 +96,15 @@ static void lora_task(void *arg)
     sendLoraModule("AT+KEY= APPKEY,\"14 46 2a 40 45 46 4c 7e a7 29 6c 07 5f c7 ba cc\"\n", 65);
     //On passe en mode OTAA
     sendLoraModule("AT+MODE=LWOTAA\n", 15);
+    //On met la pouissance au MAX
+    sendLoraModule("AT+POWER=24, FORCE\n", 19);
     //On rejoint le réseau
-    sendLoraModule("AT+JOIN\n", 8);
+    joinNetwork();
 
     static uint16_t u16msgNumber = 0;
     static char buffer[100];
 
     //On attends que la connection se fasse
-    vTaskDelay(5000 / portTICK_PERIOD_MS);
     ESP_LOGI("LoraTask", "Start sending");
 
     while (1) {
@@ -115,7 +117,7 @@ static void lora_task(void *arg)
         u16msgNumber++;
 
         //Sleep for 5s 
-        vTaskDelay(5000 / portTICK_PERIOD_MS);
+        vTaskDelay(20000 / portTICK_PERIOD_MS);
     }
 }
 
@@ -129,6 +131,35 @@ void sendLoraModule(char* text, int size)
     while(len == 0)
     {
         len = uart_read_bytes(UART_LORA_PORT_NUM, data, (BUF_SIZE - 1), 20 / portTICK_PERIOD_MS);
+    }
+    ESP_LOGI("LoraTask", "Message length: %d - %.*s", len, len, data);
+}
+
+void joinNetwork(void)
+{
+    // Configure a temporary buffer for the incoming data
+    uint8_t *data = (uint8_t *) malloc(BUF_SIZE);
+    int len = 0;
+
+    uart_write_bytes(UART_LORA_PORT_NUM, "AT+JOIN\n", 8);
+
+    //Normal response +JOIN: NORMAL
+    while(len == 0)
+    {
+        len = uart_read_bytes(UART_LORA_PORT_NUM, data, (BUF_SIZE - 1), 20 / portTICK_PERIOD_MS);
+    }
+    ESP_LOGI("LoraTask", "Message length: %d - %.*s", len, len, data);
+    len = 0;
+    //Join response
+    while(len == 0)
+    {
+        len = uart_read_bytes(UART_LORA_PORT_NUM, data, (BUF_SIZE - 1), 20 / portTICK_PERIOD_MS);
+    }
+    if(!memcmp(data, "+JOIN: Join failed", 18))
+    {
+        //On restart l'esp si on a pas réussi à se connecter
+        ESP_LOGI("LoraTask", "Join failed");
+        esp_restart();
     }
     ESP_LOGI("LoraTask", "Message length: %d - %.*s", len, len, data);
 }
