@@ -9,3 +9,14 @@ build/
 venv/
 *.session
 .env
+
+#Latex
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.log
+*.pdf
+*.run.xml
+*.gz
+*.toc
