@@ -1,0 +1,86 @@
+% !TeX spellcheck = fr_FR
+\title{%
+	Mode d'emploi LoRa\\
+	\large Un guide non exaustif de l'installation\\
+	 compliquée d'une Gateway LoRa}
+\date{27 avril 2023}
+\author{Xavier Hueber\\Noé Lindelaub\\HE-ARC}
+\fontsize{12}{12}
+\documentclass{article}
+
+%Margins
+\usepackage{geometry}
+\geometry{
+	a4paper,
+	left=19.1mm,
+	right=19.1mm,
+	top=25.4mm,
+	bottom=25.4mm,
+}
+
+%Import packages
+\usepackage{graphicx}
+\usepackage{blindtext}
+\usepackage[section]{placeins}
+\usepackage{float}% If comment this, figure moves to Page 2
+\usepackage{ragged2e}
+\usepackage{framed}
+\usepackage{mathtools} 
+\usepackage{amsmath} 
+\usepackage[citestyle=alphabetic,bibstyle=authortitle, backend=biber]{biblatex}
+\bibliography{sources.bib}
+
+\justifying
+
+%Custom Macros
+\newcommand{\XHframebox}[1] 
+{
+	\noindent\framebox{\noindent
+		\begin{minipage}{\dimexpr\linewidth-2\fboxrule-2\fboxsep\relax}
+			#1
+		\end{minipage}
+	}
+}
+%Change table of contents name
+\renewcommand{\contentsname}{Table des matières}
+%Removes Bibliography from Table of contents
+
+\begin{document}
+	\maketitle
+	\newpage
+	\tableofcontents
+	\newpage
+	\section{Introduction}
+		Ce guide créé dans le cadre du cours de Systèmes Communicants 2 \textsuperscript\textcopyright, vous expliquera comment installer les logiciels nécessaires à la création d'une Gateway LoRa à partir d'un HAT Raspberry Pi Seeed disposant d'une puce RHF0M301.\\
+		Nous utiliserons des nodes possédant d'un microprocesseur ESP32-S3 ainsi que d'un module série LoRa-E5-HF pour transmettre des messages par LoRaWAN\textsuperscript\textregistered.
+		\subsection{Matériel utilisé}
+			Dans le cadre de ce projet, nous avons utilisé:
+			\begin{itemize}
+				\item Un kit LoRa/LoRaWAN\textsuperscript\textregistered Gateway - 868MHz de Seeed.
+				\item Un Raspberry Pi 3 modèle B.
+				\item Deux ESP32-S3-DevKitC-1 v1.0 de Espressif.
+				\item Deux modules LoRa-E5-HF de Seeed.
+				\item Des antennes 868MHz SMA.
+				\item Câble d'adaptation U-FL vers SMA.
+				\item Une Gateway TheThingNetwork Kickstarter
+				\item Une Gateway TheThingNetwork Indoor 
+			\end{itemize}
+		\subsection{Logiciels utilisés}
+			Dans le cadre de ce projet, nous avons installé:
+				\begin{itemize}
+				\item Raspberry Pi OS 64-bit datant du 21 février 2023.
+				\item ChirpStack v3.
+				\item RHF0M301-ChirpStack.
+				\item Un éditeur de texte moderne (ex: Sublime Text, VSCode, ...)
+				\item Le compilateur IDF de Espressif
+			\end{itemize}
+	\newpage
+	\section{Installation}
+		\subsection{Installation du Raspberry Pi}
+			Le Raspberry Pi nous servira 
+		\subsection{Installation de l'environnement de développement Espressif}
+			
+	\newpage
+	\section{Sources}
+		\printbibliography
+\end{document}
