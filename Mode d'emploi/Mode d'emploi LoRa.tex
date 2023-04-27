@@ -118,7 +118,16 @@
 				Nous avons alors commencé par chercher des applications tierces compatible avec le module RHF0M301. Une solution simple était d'installer basicstation, un logiciel développé par TTN qui transfère tous les paquets vers leurs serveurs.
 				
 				Cependant, nous ne voulions pas pour commencer des tests, être dépendant de TTN et de leurs services (ceux-ci étant fortement limités à 30 secondes d'émission par jour).
-				Nous avons alors décidé de chercher une autre solution et sommes tombés sur ChirpStack. ChirpStack est un ensemble d'applications permettant la réception, l'envoi et la gestion de paquets LoRaWAN\textsuperscript\textregistered. 
+				Nous avons alors décidé de chercher une autre solution et sommes tombés sur ChirpStack. ChirpStack est un ensemble d'applications permettant la réception, l'envoi et la gestion de paquets LoRaWAN\textsuperscript\textregistered comme basicstation, mais elles permettent de gagner en flexibilité car chaque étape de traitement des paquets sont fait par une autre application de façon totalement indépendante.
+				
+				ChirpStack nous donne ainsi accès au système que vous pouvez voir ci-dessous dans la figure \ref{fig:systemechirpstack}:
+				\begin{figure}[H]
+					\centering
+					\includegraphics[width=0.7\linewidth]{Systeme_ChirpStack}
+					\caption{Système applicatif ChirpStack}
+					\label{fig:systemechirpstack}
+				\end{figure}
+				
 				
 				
 			\subsection{Installation de l'environnement de développement Espressif}
