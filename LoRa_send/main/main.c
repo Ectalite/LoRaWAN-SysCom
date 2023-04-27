@@ -49,6 +49,7 @@
 
 void sendLoraModule(char* text, int size);
 void joinNetwork(void);
+void sendLoraMSG(char* text, int size);
 
 static void lora_task(void *arg)
 {
@@ -108,16 +109,16 @@ static void lora_task(void *arg)
     ESP_LOGI("LoraTask", "Start sending");
 
     while (1) {
-        snprintf(buffer, 100, "AT+CMSG=\"Blotz-%d\"\n", u16msgNumber);
+        snprintf(buffer, 100, "AT+MSG=\"Blotz-%d\"\n", u16msgNumber);
         ESP_LOGI("LoraTask", "%s", buffer);
 
         //Send a message per LoRA
-        sendLoraModule(buffer, 100);
+        sendLoraMSG(buffer, 100);
 
         u16msgNumber++;
 
         //Sleep for 5s 
-        vTaskDelay(20000 / portTICK_PERIOD_MS);
+        vTaskDelay(1000 / portTICK_PERIOD_MS);
     }
 }
 
@@ -128,11 +129,30 @@ void sendLoraModule(char* text, int size)
     int len = 0;
 
     uart_write_bytes(UART_LORA_PORT_NUM, text, size);
+
     while(len == 0)
     {
         len = uart_read_bytes(UART_LORA_PORT_NUM, data, (BUF_SIZE - 1), 20 / portTICK_PERIOD_MS);
     }
     ESP_LOGI("LoraTask", "Message length: %d - %.*s", len, len, data);
+}
+
+void sendLoraMSG(char* text, int size)
+{
+    // Configure a temporary buffer for the incoming data
+    uint8_t *data = (uint8_t *) malloc(BUF_SIZE);
+    int len = 0;
+
+    uart_write_bytes(UART_LORA_PORT_NUM, text, size);
+    while(memcmp(data, "+MSG: Done", 10))
+    {
+        while(len == 0)
+        {
+            len = uart_read_bytes(UART_LORA_PORT_NUM, data, (BUF_SIZE - 1), 20 / portTICK_PERIOD_MS);
+        }
+        ESP_LOGI("LoraTask", "Message length: %d - %.*s", len, len, data);
+        len = 0;
+    }
 }
 
 void joinNetwork(void)
