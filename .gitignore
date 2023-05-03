@@ -20,3 +20,4 @@ venv/
 *.run.xml
 *.gz
 *.toc
+*.out

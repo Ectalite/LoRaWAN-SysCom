@@ -28,6 +28,7 @@
 \usepackage{mathtools} 
 \usepackage{amsmath}
 \usepackage{subcaption}
+\usepackage{hyperref}
 \usepackage[citestyle=alphabetic,bibstyle=authortitle, backend=biber]{biblatex}
 \bibliography{sources.bib}
 
@@ -120,7 +121,13 @@
 				Cependant, nous ne voulions pas pour commencer des tests, être dépendant de TTN et de leurs services (ceux-ci étant fortement limités à 30 secondes d'émission par jour).
 				Nous avons alors décidé de chercher une autre solution et sommes tombés sur ChirpStack. ChirpStack est un ensemble d'applications permettant la réception, l'envoi et la gestion de paquets LoRaWAN\textsuperscript\textregistered comme basicstation, mais elles permettent de gagner en flexibilité car chaque étape de traitement des paquets sont fait par une autre application de façon totalement indépendante.
 				
-				ChirpStack nous donne ainsi accès au système que vous pouvez voir ci-dessous dans la figure \ref{fig:systemechirpstack}:
+				\paragraph{ChirpStack nous donne ainsi accès au système que vous pouvez voir dans la figure \ref{fig:systemechirpstack}:}
+				\begin{enumerate}
+					\item L'application Gateway viens communiquer avec le HAT du Raspberry Pi 3 et publie les informations reçues par MQTT.
+					\item Le Network Server récupère alors les informations et les traite pour qu'elles soient utilisable par la User Application et publie sur MQTT.
+					\item La ou les User(s) Application(s) souscrivent au Network Server et reçoivent alors les informations traités.
+				\end{enumerate}
+
 				\begin{figure}[H]
 					\centering
 					\includegraphics[width=0.7\linewidth]{Systeme_ChirpStack}
@@ -128,10 +135,20 @@
 					\label{fig:systemechirpstack}
 				\end{figure}
 				
-				
-				
-			\subsection{Installation de l'environnement de développement Espressif}
+		\subsection{Installation de l'environnement de développement Espressif}
+			Maintenant que nous avons installé les tools requis pour faire fonctionner le Raspberry Pi, nous pouvons passer à l'installation de la toolchain ESP afin de pouvoir programmer nos deux Devkits. 
+			\newline
+			\newline
+			Pour ce faire, nous nous rendons sur le site d'espressif et suivons le guide d'installation\footnote{\url{https://docs.espressif.com/projects/esp-idf/en/latest/esp32s3/get-started/index.html\#get-started-step-by-step}}. 
+			\newline
+			Nous avons ensuite compilé et flasher le projet Hello-World\footnote{Voir notre répertoire Github} pour tester le fonctionnement de la carte. C'est avec succès que celle-ci s'est mise en route et nous a donné ses premiers mots.
 			
+	\section{Programmation du Devkit ESP}
+		Nous avons commencé par étudier la documentation fournie par Seeed pour son  module LoRa-E5-HF. Sachant qu'il se pilote par série, il nous a fallu comprendre comment utiliser le port série du Devkit ESP.
+		
+		Pour cela, nous avons trouvé l'exemple uart\_echo donné par Espressif qui nous a permis de comprendre comment configurer et utiliser l'uart.
+		
+		Nous avons ensuite importé un partie du code de uart\_echo dans notre application Lora\_send
 	\newpage
 	\section{Sources}
 		\printbibliography
