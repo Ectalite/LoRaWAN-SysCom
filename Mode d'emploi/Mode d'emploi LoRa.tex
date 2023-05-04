@@ -28,7 +28,7 @@
 \usepackage{mathtools} 
 \usepackage{amsmath}
 \usepackage{subcaption}
-\usepackage{hyperref}
+\usepackage[hidelinks]{hyperref}
 \usepackage[citestyle=alphabetic,bibstyle=authortitle, backend=biber]{biblatex}
 \bibliography{sources.bib}
 
@@ -95,7 +95,7 @@
 				\XHframebox{Le Raspberry Pi nous servira à recevoir, gérer et retransmettre les paquets reçu par LoRaWAN\textsuperscript\textregistered.}
 				
 				Nous avons commencé par installer Rapsberry Pi OS 64 bit sur une carte sd grâce au logiciel Raspberry Pi Imager (voir figure \ref{fig:raspberrypiimager}).\\
-				Dans celui-ci, nous pouvons activer la connection SSH et configurer les logins de l'utilisateur, ainsi nous n'avons pas besoin d'utiliser un écran pour configurer le Raspberry Pi.
+				Dans celui-ci, nous pouvons activer la connexion SSH et configurer les logins de l'utilisateur, ainsi nous n'avons pas besoin d'utiliser un écran pour configurer le Raspberry Pi.
 				\begin{figure}[H]
 					\centering
 					\begin{subfigure}{0.49\textwidth}
@@ -119,7 +119,7 @@
 				Nous avons alors commencé par chercher des applications tierces compatible avec le module RHF0M301. Une solution simple était d'installer basicstation, un logiciel développé par TTN qui transfère tous les paquets vers leurs serveurs.
 				
 				Cependant, nous ne voulions pas pour commencer des tests, être dépendant de TTN et de leurs services (ceux-ci étant fortement limités à 30 secondes d'émission par jour).
-				Nous avons alors décidé de chercher une autre solution et sommes tombés sur ChirpStack. ChirpStack est un ensemble d'applications permettant la réception, l'envoi et la gestion de paquets LoRaWAN\textsuperscript\textregistered comme basicstation, mais elles permettent de gagner en flexibilité car chaque étape de traitement des paquets sont fait par une autre application de façon totalement indépendante.
+				Nous avons alors décidé de chercher une autre solution et sommes tombés sur ChirpStack\footnote{\url{https://www.chirpstack.io/docs/chirpstack-gateway-bridge/install/raspberry-pi.html}}. ChirpStack est un ensemble d'applications permettant la réception, l'envoi et la gestion de paquets LoRaWAN\textsuperscript\textregistered comme basicstation, mais elles permettent de gagner en flexibilité car chaque étape de traitement des paquets sont fait par une autre application de façon totalement indépendante.
 				
 				\paragraph{ChirpStack nous donne ainsi accès au système que vous pouvez voir dans la figure \ref{fig:systemechirpstack}:}
 				\begin{enumerate}
@@ -148,8 +148,61 @@
 		
 		Pour cela, nous avons trouvé l'exemple uart\_echo donné par Espressif qui nous a permis de comprendre comment configurer et utiliser l'uart.
 		
-		Nous avons ensuite importé un partie du code de uart\_echo dans notre application Lora\_send
+		Nous avons ensuite importé un partie du code de uart\_echo dans notre application LoRa\_send et utilisé les commandes AT que nous avions testé à la mains auparavant. Voici quelques commandes AT disponibles intéressantes ainsi que leur utilité:
+		\begin{center}
+			\begin{tabular}{ ||c|c|| } 
+				\hline
+				Commande AT & Utilisation \\ [0.5ex]
+				\hline \hline
+				AT & Répond AT+ pour dire que tout se passe bien \\ 
+				AT+UART=BR, {baudrate} & Permet de choisir le baudrate au prochain démarrage du module \\
+				AT+KEY= APPKEY, "KEY" & Permet de configurer l'AppKey utilisé lors de l'envoi de paquets LoRa \\
+				AT+MODE=LWOTAA & Permet de configurer le mode de connexion à la Gateway \\
+				AT+JOIN & Permet de rejoindre la Gateway \\
+				AT+MSG="CestNoe" & Permet d'envoyer un paquet LoRa contenant le message spécifié \\
+				AT+CMSG="CestNoe" & Envoi un paquet et demande une confirmation \\
+				AT+POWER=14 & Permet de choisir la puissance d'émission en dB \\
+				\hline
+			\end{tabular}
+		\end{center}
+		
+		Comme vous pouvez le voir dans la figure \ref{fig:lorasend}, le programme est assez simple. Nous commençons par configurer la connexion UART requise pour communiquer avec le module LoRa, puis nous configurons ce dernier (voir figure \ref{fig:atlorasend}) et enfin nous avons écrit une boucle while qui envoi en boucle tous les X temps un message incrémenté.
+		\begin{figure}[H]
+			\centering
+			\begin{subfigure}{0.20\textwidth}
+				\centering
+				\includegraphics[height=15em]{LoRa_send.drawio}
+				\caption{Diagramme du logiciel LoRa\_send}
+				\label{fig:lorasend}
+			\end{subfigure}
+			\begin{subfigure}{0.70\textwidth}
+				\centering
+				\includegraphics[width=1\linewidth]{atLorasend}
+				\caption{Configuration du module LoRa}
+				\label{fig:atlorasend}
+			\end{subfigure}
+			\caption{LoRa\_send}
+		\end{figure}
+	
+	\section{Configuration de ChirpStack}
+		Nous avions vu précédemment que nous avions installé ChirpStack sur notre Raspberry Pi, il est maintenant temps de configurer ce stack d'applications pour pouvoir recevoir nos paquets LoRa.
+		La configuration n'est pas compliqué, mais il faut quand même suivre un ordre précis sinon vous ne pourriez vous retrouver coincé. Cette dernière se fera dans l'interface web de ChirpStack disponible sur le port 8080 du Raspberry Pi.
+		
+		\subsection{Network Server}
+			Dans un premier temps il va falloir configurer le Network Server, c'est lui qui est gère les paquets. Dans la figure \ref{fig:networkserver} vous pouvez voir qu'on lui donne l'adresse localhost:8000 car ce dernier est installé en local. Si nous voulions mettre en place une plus grande architecture de Gateways, nous pourrions ainsi dédié un serveur unique comme étant le Network Server.
+			\begin{figure}[H]
+				\centering
+				\includegraphics[width=0.7\linewidth]{networkserver}
+				\caption{Network Server}
+				\label{fig:networkserver}
+			\end{figure}
+		
+		\subsection{Gateway Profile}
+			Cette étape n'est pas une des plus intéressantes et cette option mériterait d'être configuré directement lors de la création de la Gateway dans l'interface de Chirpstack
+		
 	\newpage
-	\section{Sources}
-		\printbibliography
+	\section{Version}
+		\begin{itemize}
+			\item Version 1.0 : 4 mai 2023 - Version originale
+		\end{itemize}
 \end{document}
