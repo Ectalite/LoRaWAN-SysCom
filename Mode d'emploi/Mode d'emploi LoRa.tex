@@ -28,9 +28,18 @@
 \usepackage{mathtools} 
 \usepackage{amsmath}
 \usepackage{subcaption}
+\usepackage{fancyhdr}
 \usepackage[hidelinks]{hyperref}
 \usepackage[citestyle=alphabetic,bibstyle=authortitle, backend=biber]{biblatex}
 \bibliography{sources.bib}
+
+\pagestyle{fancy}
+
+\fancyhead{}
+\fancyfoot{} % clear all footer fields
+\fancyfoot[LO,CE]{Xavier Hueber \\ Noé Lindenlaub}
+\fancyfoot[CO,RE]{\thepage}
+\fancyfoot[LE,RO]{Mode d'emploi LoRa}
 
 \justifying
 
@@ -198,11 +207,91 @@
 			\end{figure}
 		
 		\subsection{Gateway Profile}
-			Cette étape n'est pas une des plus intéressantes et cette option mériterait d'être configuré directement lors de la création de la Gateway dans l'interface de Chirpstack
+			Cette étape n'est pas une des plus intéressantes et cette option mériterait d'être configuré directement lors de la création de la Gateway dans l'interface de Chirpstack. Le profile de la Gateway permet de choisir le temps entre deux récupération de paquets du HAT Raspberry Pi.
+			
+			On peut voir sur la figure \ref{fig:gateway-profile} les options disponibles et comment nous les avons configurés. 
+			
+			\begin{figure}[H]
+				\centering
+				\includegraphics[width=0.7\linewidth]{gateway-profile}
+				\caption{Gateway profiles}
+				\label{fig:gateway-profile}
+			\end{figure}
+		
+		\subsection{Device Profile}
+			La configuration du Device profile permet de choisir comme son nom l'indique un profile pour les nodes LoRa que nous auront.
+			On peut entre autre y choisir la version de LoRaWAN\textsuperscript\textregistered supporté ainsi que la classe de la node et le mode de connection à la Gateway.
+			
+			On peut voir sur la figure \ref{fig:device-profile} que nous utilisons la version 1.0.4 de LoRaWAN et pour le mode de connection nous utilisons le LWOTAA comme spécifié plus haut dans le programme LoRa\_send pour l'ESP32.
+						
+			\begin{figure}[H]
+				\centering
+				\includegraphics[width=0.7\linewidth]{device-profile}
+				\caption{Device profile}
+				\label{fig:device-profile}
+			\end{figure}
+			
+		\subsection{Gateway}
+			Nous pouvons maintenant configurer la Gateway:
+			
+			Dans ce menu (voir figure \ref{fig:gateway}), nous pouvons donner un nom à notre Gateway et un ID (généré aléatoirement en général). Il faut ensuite choisir le Network Server avec qui elle va communiquer et le Gateway profile.
+			\begin{figure}[H]
+				\centering
+				\includegraphics[width=0.7\linewidth]{gateway}
+				\caption{Configuration de la Gateway}
+				\label{fig:gateway}
+			\end{figure}
+			
+		\subsection{Application}
+			Une application est un groupement de nodes, une fois créé elle permettra d'ajouter des nodes qui pourront se connecter à notre Gateway et c'est aussi dans l'Application que nous pourront choisir comment seront envoyé les paquets vers internet (voir le Chapitre \ref{internet}).
+			
+			Dans la figure \ref{fig:application}, on peut donc choisir un nom pour notre Application et une description.
+			
+			\begin{figure}[H]
+				\centering
+				\includegraphics[width=0.7\linewidth]{application}
+				\caption{Configuration d'une application}
+				\label{fig:application}
+			\end{figure}
+			
+		\subsection{Device}
+			Enfin la dernière chose à configurer dans ChirpStack est la création d'une node.
+			
+			Dans le menu de l'application nous pouvons ajouter un nouveau device, vous verrez alors apparaitre la figure \ref{fig:device}.
+			
+			Ici il faut donc donner à un nom à notre node, un profil et un EUI qui correspond à l'identifiant de la node. Sur notre module LoRa Seeed, nous pouvons utiliser la commande série AT+ID=DevEui pour que le module nous donne son EUI.
+			
+			Ensuite une fois que ces informations sont remplis, on peut créer le device et ChirpStack nous proposera alors de générer une APPKEY. Cette dernière est très importante car elle est la clé permettant à la node de se connecter à la Gateway, sans elle la Gateway refusera la node. On peut ensuite copier l'APPKEY et la coller dans le programme LoRa\_send.
+				
+			\begin{figure}[H]
+				\centering
+				\includegraphics[width=0.7\linewidth]{device}
+				\caption{Configuration d'une node}
+				\label{fig:device}
+			\end{figure}
+			
+			Si la node après ça n'arrive pas à se connecter à la Gateway, il faudra voir si les versions de LoRaWAN sont les mêmes entre celle donné dans le Device-Profile et celle configuré sur la node.
+			
+			On peut aussi utiliser le site LoRaWAN 1.0.x packet decoder\footnote{\url{https://lorawan-packet-decoder-0ta6puiniaut.runkit.sh}} pour voir si il y a un conflit d'APPKEY.
+		
+	\section{Envoi des paquets sur internet}
+		\label{internet}
+		\XHframebox{La node arrive maintenant à envoyer des paquets LoRaWAN à la Gateway, cependant dans l'interface de ChirpStack nous recevons les messages sous formes de JSON et la donnée est en base64.}
+		
+		Nous voulions alors pouvoir traiter ces messages pour ne récupérer que les informations les plus importantes.  ChirpStack nous permet alors d'utiliser d'autres applications comme MQTT ou Azure Service Bus (qui est une forme de MQTT propriétaire) pour envoyer les messages vers internet.
+		
+		Nous avons testés plusieurs services, mais celui qui a fonctionné pour le mieux est Azure Service Bus. Vous pouvez voir sur la figure \ref{fig:scriptpython} un diagramme montrant comme les messages sont envoyés et transformés à l'aide d'un script python\footnote{Vous pouvez retrouver ce script dans notre répertoire Github} vers Telegram.
+		
+		\begin{figure}[H]
+			\centering
+			\includegraphics[width=0.7\linewidth]{scriptPython}
+			\caption{Script python}
+			\label{fig:scriptpython}
+		\end{figure}
 		
 	\newpage
 	\section{Version}
 		\begin{itemize}
-			\item Version 1.0 : 4 mai 2023 - Version originale
+			\item Version 1.0 : 7 mai 2023 - Version originale
 		\end{itemize}
 \end{document}
