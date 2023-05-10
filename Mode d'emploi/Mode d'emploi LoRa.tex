@@ -62,8 +62,8 @@
 	\tableofcontents
 	\newpage
 	\section{Introduction}
-		Ce guide créé dans le cadre du cours de Systèmes Communicants 2\textsuperscript\textcopyright, vous expliquera comment installer les logiciels nécessaires à la création d'une Gateway LoRa à partir d'un HAT Raspberry Pi Seeed disposant d'une puce RHF0M301.\\
-		Nous utiliserons des nodes possédant d'un microprocesseur ESP32-S3 ainsi que d'un module série LoRa-E5-HF pour transmettre des messages par LoRaWAN\textsuperscript\textregistered.
+		Ce guide créé dans le cadre du cours de Systèmes Communicants 2\textsuperscript\textcopyright vous expliquera comment installer les logiciels nécessaires à la création d'une Gateway LoRa à partir d'un HAT Raspberry Pi Seeed disposant d'une puce RHF0M301.\\
+		Nous utiliserons des nodes possédant un microprocesseur ESP32-S3 ainsi qu'un module série LoRa-E5-HF pour transmettre des messages par LoRaWAN\textsuperscript\textregistered.
 		\subsection{Matériel utilisé}
 			Dans le cadre de ce projet, nous avons utilisé:
 			\begin{itemize}
@@ -101,7 +101,7 @@
 	\section{Installation}
 		\subsection{Installation du Raspberry Pi}
 			\subsubsection{Raspberry Pi OS}
-				\XHframebox{Le Raspberry Pi nous servira à recevoir, gérer et retransmettre les paquets reçu par LoRaWAN\textsuperscript\textregistered.}
+				\XHframebox{Le Raspberry Pi nous servira à recevoir, gérer et retransmettre les paquets reçus par LoRaWAN\textsuperscript\textregistered.}
 				
 				Nous avons commencé par installer Rapsberry Pi OS 64 bit sur une carte sd grâce au logiciel Raspberry Pi Imager (voir figure \ref{fig:raspberrypiimager}).\\
 				Dans celui-ci, nous pouvons activer la connexion SSH et configurer les logins de l'utilisateur, ainsi nous n'avons pas besoin d'utiliser un écran pour configurer le Raspberry Pi.
@@ -125,9 +125,9 @@
 				Maintenant que nous avons installé un système d'exploitation sur le Raspberry Pi, nous pouvons installer une application pour récupérer et gérer les paquets LoRaWAN\textsuperscript\textregistered.
 				
 				Nous voulions pour cela installer l'application proposé par Seeed pour l'utilisation de leur HAT, cependant nous n'avons pas trouvé de liens de téléchargement ni de guide d'installation disponible sur leur site web. 
-				Nous avons alors commencé par chercher des applications tierces compatible avec le module RHF0M301. Une solution simple était d'installer basicstation, un logiciel développé par TTN qui transfère tous les paquets vers leurs serveurs.
+				Nous avons alors commencé par chercher des applications tierces compatibles avec le module RHF0M301. Une solution simple était d'installer basicstation, un logiciel développé par TTN qui transfère tous les paquets vers leurs serveurs.
 				
-				Cependant, nous ne voulions pas pour commencer des tests, être dépendant de TTN et de leurs services (ceux-ci étant fortement limités à 30 secondes d'émission par jour).
+				Cependant, nous ne voulions pas pour commencer des tests, être dépendant de TTN et de leurs services (ceux-ci étant fortement limités, à 30 secondes d'émission par jour).
 				Nous avons alors décidé de chercher une autre solution et sommes tombés sur ChirpStack\footnote{\url{https://www.chirpstack.io/docs/chirpstack-gateway-bridge/install/raspberry-pi.html}}. ChirpStack est un ensemble d'applications permettant la réception, l'envoi et la gestion de paquets LoRaWAN\textsuperscript\textregistered comme basicstation, mais elles permettent de gagner en flexibilité car chaque étape de traitement des paquets sont fait par une autre application de façon totalement indépendante.
 				
 				\paragraph{ChirpStack nous donne ainsi accès au système que vous pouvez voir dans la figure \ref{fig:systemechirpstack}:}
@@ -150,12 +150,12 @@
 			\newline
 			Pour ce faire, nous nous rendons sur le site d'espressif et suivons le guide d'installation\footnote{\url{https://docs.espressif.com/projects/esp-idf/en/latest/esp32s3/get-started/index.html\#get-started-step-by-step}}. 
 			\newline
-			Nous avons ensuite compilé et flasher le projet Hello-World\footnote{Voir notre répertoire Github} pour tester le fonctionnement de la carte. C'est avec succès que celle-ci s'est mise en route et nous a donné ses premiers mots.
+			Nous avons ensuite compilé et flashé le projet Hello-World\footnote{Voir notre répertoire Github} pour tester le fonctionnement de la carte. C'est avec succès que celle-ci s'est mise en route et nous a donné ses premiers mots.
 			
 	\section{Programmation du Devkit ESP}
 		Nous avons commencé par étudier la documentation fournie par Seeed pour son  module LoRa-E5-HF. Sachant qu'il se pilote par série, il nous a fallu comprendre comment utiliser le port série du Devkit ESP.
 		
-		Pour cela, nous avons trouvé l'exemple uart\_echo donné par Espressif qui nous a permis de comprendre comment configurer et utiliser l'uart.
+		Pour cela, nous avons trouvé l'exemple uart\_echo donné par Espressif.
 		
 		Nous avons ensuite importé un partie du code de uart\_echo dans notre application LoRa\_send et utilisé les commandes AT que nous avions testé à la mains auparavant. Voici quelques commandes AT disponibles intéressantes ainsi que leur utilité:
 		\begin{center}
@@ -181,7 +181,7 @@
 			\begin{subfigure}{0.20\textwidth}
 				\centering
 				\includegraphics[height=15em]{LoRa_send.drawio}
-				\caption{Diagramme du logiciel LoRa\_send}
+				\caption{Diagramme du\\ logiciel LoRa\_send}
 				\label{fig:lorasend}
 			\end{subfigure}
 			\begin{subfigure}{0.70\textwidth}
@@ -198,7 +198,7 @@
 		La configuration n'est pas compliqué, mais il faut quand même suivre un ordre précis sinon vous ne pourriez vous retrouver coincé. Cette dernière se fera dans l'interface web de ChirpStack disponible sur le port 8080 du Raspberry Pi.
 		
 		\subsection{Network Server}
-			Dans un premier temps il va falloir configurer le Network Server, c'est lui qui est gère les paquets. Dans la figure \ref{fig:networkserver} vous pouvez voir qu'on lui donne l'adresse localhost:8000 car ce dernier est installé en local. Si nous voulions mettre en place une plus grande architecture de Gateways, nous pourrions ainsi dédié un serveur unique comme étant le Network Server.
+			Dans un premier temps il va falloir configurer le Network Server, c'est lui qui est gère les paquets. Dans la figure \ref{fig:networkserver} vous pouvez voir qu'on lui donne l'adresse localhost:8000 car ce dernier est installé en local. Si nous voulions mettre en place une plus grande architecture de Gateways, nous pourrions ainsi dédier un serveur unique comme étant le Network Server.
 			\begin{figure}[H]
 				\centering
 				\includegraphics[width=0.7\linewidth]{networkserver}
@@ -219,7 +219,7 @@
 			\end{figure}
 		
 		\subsection{Device Profile}
-			La configuration du Device profile permet de choisir comme son nom l'indique un profile pour les nodes LoRa que nous auront.
+			La configuration du Device profile permet de choisir comme son nom l'indique un profil pour les nodes LoRa que nous auront.
 			On peut entre autre y choisir la version de LoRaWAN\textsuperscript\textregistered supporté ainsi que la classe de la node et le mode de connection à la Gateway.
 			
 			On peut voir sur la figure \ref{fig:device-profile} que nous utilisons la version 1.0.4 de LoRaWAN et pour le mode de connection nous utilisons le LWOTAA comme spécifié plus haut dans le programme LoRa\_send pour l'ESP32.
@@ -243,9 +243,9 @@
 			\end{figure}
 			
 		\subsection{Application}
-			Une application est un groupement de nodes, une fois créé elle permettra d'ajouter des nodes qui pourront se connecter à notre Gateway et c'est aussi dans l'Application que nous pourront choisir comment seront envoyé les paquets vers internet (voir le Chapitre \ref{internet}).
+			Une application est un groupement de nodes, une fois créée elle permettra d'ajouter des nodes qui pourront se connecter à notre Gateway et c'est aussi dans l'application que nous pourront choisir comment seront envoyé les paquets vers internet (voir le Chapitre \ref{internet}).
 			
-			Dans la figure \ref{fig:application}, on peut donc choisir un nom pour notre Application et une description.
+			Dans la figure \ref{fig:application}, on peut donc choisir un nom pour notre application et une description.
 			
 			\begin{figure}[H]
 				\centering
@@ -257,11 +257,11 @@
 		\subsection{Device}
 			Enfin la dernière chose à configurer dans ChirpStack est la création d'une node.
 			
-			Dans le menu de l'application nous pouvons ajouter un nouveau device, vous verrez alors apparaitre la figure \ref{fig:device}.
+			Dans le menu de l'application nous pouvons ajouter un nouveau device, vous verrez alors apparaître la figure \ref{fig:device}.
 			
 			Ici il faut donc donner à un nom à notre node, un profil et un EUI qui correspond à l'identifiant de la node. Sur notre module LoRa Seeed, nous pouvons utiliser la commande série AT+ID=DevEui pour que le module nous donne son EUI.
 			
-			Ensuite une fois que ces informations sont remplis, on peut créer le device et ChirpStack nous proposera alors de générer une APPKEY. Cette dernière est très importante car elle est la clé permettant à la node de se connecter à la Gateway, sans elle la Gateway refusera la node. On peut ensuite copier l'APPKEY et la coller dans le programme LoRa\_send.
+			Ensuite une fois que ces informations sont remplies, on peut créer le device et ChirpStack nous proposera alors de générer une APPKEY. Cette dernière est très importante car elle est la clé permettant à la node de se connecter à la Gateway, sans elle la Gateway refusera la node. On peut ensuite copier l'APPKEY et la coller dans le programme LoRa\_send.
 				
 			\begin{figure}[H]
 				\centering
@@ -270,7 +270,7 @@
 				\label{fig:device}
 			\end{figure}
 			
-			Si la node après ça n'arrive pas à se connecter à la Gateway, il faudra voir si les versions de LoRaWAN sont les mêmes entre celle donné dans le Device-Profile et celle configuré sur la node.
+			Si la node après ça n'arrive pas à se connecter à la Gateway, il faudra voir si les versions de LoRaWAN sont les mêmes entre celle donnée dans le Device-Profile et celle configurée sur la node.
 			
 			On peut aussi utiliser le site LoRaWAN 1.0.x packet decoder\footnote{\url{https://lorawan-packet-decoder-0ta6puiniaut.runkit.sh}} pour voir si il y a un conflit d'APPKEY.
 		
@@ -290,8 +290,9 @@
 		\end{figure}
 		
 	\newpage
-	\section{Version}
+	\section{Versions}
 		\begin{itemize}
 			\item Version 1.0 : 7 mai 2023 - Version originale
+			\item Version 1.1 : 10 mai 2023 - Correction de fautes
 		\end{itemize}
 \end{document}
