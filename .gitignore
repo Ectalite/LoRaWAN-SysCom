@@ -16,7 +16,6 @@ venv/
 *.bcf
 *.blg
 *.log
-*.pdf
 *.run.xml
 *.gz
 *.toc
